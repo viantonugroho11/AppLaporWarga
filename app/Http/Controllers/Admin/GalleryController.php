@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Gallery;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class GalleryController extends Controller
 {
@@ -14,7 +16,8 @@ class GalleryController extends Controller
      */
     public function index()
     {
-        //
+        $gallery=Gallery::all();
+        return view('',compact(''));
     }
 
     /**
@@ -24,7 +27,7 @@ class GalleryController extends Controller
      */
     public function create()
     {
-        //
+        return view();
     }
 
     /**
@@ -35,7 +38,22 @@ class GalleryController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'nama'=>'required',
+            'foto'=>'required',
+        ]);
+        $image = $request->file('foto');
+        $image->storeAs('public/gallery', $image->hashName());
+
+        $gallery=Gallery::create([
+            'nama'=>$request->nama,
+            'foto'=>$image,
+        ]);
+        if ($gallery) {
+            return redirect()->route('gallery.index')->with(['success' => 'Data Berhasil Disimpan!']);
+        } else {
+            return redirect()->route('gallery.index')->with(['failed' => 'Data Berhasil gagal Disimpan!']);
+        }   
     }
 
     /**
@@ -44,9 +62,9 @@ class GalleryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Gallery $gallery)
     {
-        //
+        return view('',compact(''));
     }
 
     /**
@@ -55,9 +73,9 @@ class GalleryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Gallery $gallery)
     {
-        //
+        return view('', compact(''));
     }
 
     /**
@@ -69,7 +87,29 @@ class GalleryController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $gallery=Gallery::findorfail($id);
+        if ($request->file('foto') == "") {
+
+
+            $gallery = Gallery::create([
+                'nama' => $request->nama,
+            ]);
+        }else{
+            Storage::disk('local')->delete('public/posts/' . $gallery->foto);
+
+            $image = $request->file('foto');
+            $image->storeAs('public/gallery', $image->hashName());
+
+            $gallery = Gallery::create([
+                'nama' => $request->nama,
+                'foto' => $image,
+            ]);
+        }
+        if ($gallery) {
+            return redirect()->route('gallery.index')->with(['success' => 'Data Berhasil Disimpan!']);
+        } else {
+            return redirect()->route('gallery.index')->with(['failed' => 'Data Berhasil gagal Disimpan!']);
+        }
     }
 
     /**
@@ -80,6 +120,13 @@ class GalleryController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $gallery = Gallery::findorfail($id);
+        Storage::disk('local')->delete('public/posts/' . $gallery->foto);
+        $gallery->delete();
+        if ($gallery) {
+            return redirect()->route('gallery.index')->with(['success' => 'Data Berhasil Disimpan!']);
+        } else {
+            return redirect()->route('gallery.index')->with(['failed' => 'Data Berhasil gagal Disimpan!']);
+        }
     }
 }
