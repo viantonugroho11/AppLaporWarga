@@ -15,6 +15,10 @@ class CreateKeuangansTable extends Migration
     {
         Schema::create('keuangans', function (Blueprint $table) {
             $table->id();
+            $table->string('nama_keuangan');
+            $table->string('nominal_keuangan');
+            $table->string('jenis_keuangan');
+            $table->string('keterangan_keuangan');
             $table->timestamps();
         });
     }

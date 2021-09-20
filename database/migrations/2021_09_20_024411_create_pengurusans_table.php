@@ -15,6 +15,8 @@ class CreatePengurusansTable extends Migration
     {
         Schema::create('pengurusans', function (Blueprint $table) {
             $table->id();
+            $table->string('nama_urusan');
+            $table->string('file_urusan');
             $table->timestamps();
         });
     }

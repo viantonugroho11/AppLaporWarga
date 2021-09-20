@@ -15,6 +15,9 @@ class CreateKegiatansTable extends Migration
     {
         Schema::create('kegiatans', function (Blueprint $table) {
             $table->id();
+            $table->string('nama_kegiatan');
+            $table->string('keterangan_kegiatan');
+            $table->string('tanggal_pelaksanaan_kegiatan');
             $table->timestamps();
         });
     }
