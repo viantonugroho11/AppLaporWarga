@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Kegiatan;
 use Illuminate\Http\Request;
 
 class KegiatanController extends Controller
@@ -14,7 +15,8 @@ class KegiatanController extends Controller
      */
     public function index()
     {
-        //
+        $kegiatan = Kegiatan::all();
+        return view('',compact('kegiatan'));
     }
 
     /**
@@ -24,7 +26,7 @@ class KegiatanController extends Controller
      */
     public function create()
     {
-        //
+        return view();
     }
 
     /**
@@ -35,7 +37,26 @@ class KegiatanController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'nama_kegiatan'=>'required',
+            'isi_kegiatan'=>'required',
+            'tanggal'=>'required',
+        ]);
+
+        $kegiatan=Kegiatan::create([
+            'nama_kegiatan'=>$request->nama_kegiatan,
+            'keterangan_kegiatan'=>$request->isi_kegiatan,
+            'tanggal_pelaksanaan_kegiatan'=>$request->tanggal,
+        ]);
+
+        if($kegiatan)
+        {
+            return redirect()->route('kegiatan.index')->with(['success' => 'Data Berhasil Disimpan!']);
+        }
+        else
+        {
+            return redirect()->route('kegiatan.index')->with(['failed' => 'Data Berhasil gagal Disimpan!']);
+        }
     }
 
     /**
@@ -46,7 +67,8 @@ class KegiatanController extends Controller
      */
     public function show($id)
     {
-        //
+        $kegiatan = Kegiatan::findorfail($id);
+        return view('',compact(''));
     }
 
     /**
@@ -55,9 +77,9 @@ class KegiatanController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Kegiatan $kegiatan)
     {
-        //
+        return view('',compact(''));
     }
 
     /**
@@ -69,7 +91,24 @@ class KegiatanController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $kegiatan=Kegiatan::findorfail($id);
+        $request->validate([
+            'nama_kegiatan' => 'required',
+            'isi_kegiatan' => 'required',
+            'tanggal' => 'required',
+        ]);
+
+        $kegiatan->update([
+            'nama_kegiatan' => $request->nama_kegiatan,
+            'keterangan_kegiatan' => $request->isi_kegiatan,
+            'tanggal_pelaksanaan_kegiatan' => $request->tanggal,
+        ]);
+
+        if ($kegiatan) {
+            return redirect()->route('kegiatan.index')->with(['success' => 'Data Berhasil Disimpan!']);
+        } else {
+            return redirect()->route('kegiatan.index')->with(['failed' => 'Data Berhasil gagal Disimpan!']);
+        }
     }
 
     /**
@@ -80,6 +119,12 @@ class KegiatanController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $kegiatan=Kegiatan::findorfail($id);
+        $kegiatan->delete();
+        if ($kegiatan) {
+            return redirect()->route('kegiatan.index')->with(['success' => 'Data Berhasil Disimpan!']);
+        } else {
+            return redirect()->route('kegiatan.index')->with(['failed' => 'Data Berhasil gagal Disimpan!']);
+        }   
     }
 }
